@@ -1,0 +1,57 @@
+{% extends "index.html" %}
+
+{% block section %}
+<div class="signup-wrapper">
+  <div class="signup-container">
+    <div class="signup-left">
+      <h2>Come join us!</h2>
+      <p>We are so excited to have you here. If you haven't already, create an account to get access to exclusive offers, rewards, and discounts. <br><br><a href="#">Already have an account? Sign in.</a></p>
+      
+    </div>
+
+    <div class="signup-right">
+      <h2>Signup</h2>
+      <form action="{% url 'signup' %}" method="post">
+        {% csrf_token %}
+        <div class="signup-form-group">
+          <input type="text" name="username" placeholder="Username" required />
+        </div>
+        <div class="signup-form-group">
+          <input type="text" name="organization" placeholder="Organization name" required />
+        </div>
+        <div class="signup-form-group">
+          <input type="email" name="email" placeholder="Email" required />
+        </div>
+        <div class="signup-form-group">
+          <input type="password" name="password" placeholder="Confirm Password" required />
+        </div>
+        <button class="signup-btn" type="submit">Signup</button>
+      </form>
+
+      <div class="signup-social">
+        or signup with
+        <div class="signup-social-icons">
+          <i class="fab fa-facebook-f"></i>
+          <i class="fab fa-google"></i>
+          <i class="fab fa-linkedin-in"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    const password1 = document.querySelector("input[name='password1']");
+    const password2 = document.querySelector("input[name='password2']");
+
+    form.addEventListener("submit", function (e) {
+      if (password1.value !== password2.value) {
+        e.preventDefault(); // Stop form submission
+        alert("Passwords do not match!");
+        password2.focus();
+      }
+    });
+  });
+</script>
+{% endblock %}

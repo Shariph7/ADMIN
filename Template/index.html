@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MeroEvents | Event Planner</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #2d2f53;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 4rem;
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo-text a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .login-btn {
+            border: 1px solid white;
+            padding: 0.3rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .login-btn a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            height: 3px;
+            width: 25px;
+            background-color: white;
+            border-radius: 2px;
+            transition: 0.3s ease;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .hamburger {
+                display: flex;
+                margin-left: auto;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                flex-direction: column;
+                background-color: #2D7DD2;
+                overflow: hidden;
+                max-height: 0;
+                opacity: 0;
+                transition: all 0.3s ease;
+                padding: 0;
+                z-index: 999;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-links.active {
+                max-height: 500px;
+                opacity: 1;
+                padding: 1rem 0;
+            }
+
+            .nav-links a,
+            .nav-links .login-btn {
+                padding: 12px 24px;
+                width: 100%;
+                text-align: left;
+                font-size: 15px;
+            }
+
+            .login-btn {
+                width: calc(100% - 48px);
+                margin: 8px 24px;
+                text-align: center;
+                font-size: 15px;
+            }
+        }
+
+        .meroevents {
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        main.container {
+            max-width: 1300px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .left {
+            flex: 1 1 480px;
+        }
+
+        .left h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1d1d2c;
+        }
+
+        .left p {
+            font-size: 1.15rem;
+            color: #444;
+            margin-bottom: 28px;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .start-btn {
+            display: inline-block;
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            color: #fff;
+            padding: 14px 30px;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .start-btn:hover {
+            background-color: #1c1d35;
+            transform: translateY(-1.5px);
+        }
+
+        .right {
+            flex: 1 1 380px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .right img {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 380px;
+            object-fit: cover;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .rating {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #3CB371;
+            color: white;
+            padding: 10px 16px;
+            border-top-left-radius: 10px;
+            border-bottom-right-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .rating::before {
+            content: '⭐️⭐️⭐️⭐️⭐️';
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+        }
+
+        @media (max-width: 900px) {
+            main.container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .right {
+                order: -1;
+                width: 100%;
+            }
+
+            .left h1 {
+                font-size: 2rem;
+            }
+
+            .left p {
+                font-size: 1.05rem;
+            }
+
+            .right img {
+                max-height: 280px;
+            }
+
+            .rating {
+                font-size: 0.75rem;
+                padding: 8px 14px;
+            }
+
+            .rating::before {
+                font-size: 0.75rem;
+            }
+        }
+
+        .meroevents-footer {
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            color: white;
+            text-align: center;
+            padding: 16px 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .meroevents-footer a {
+            color: #f49939;
+            text-decoration: none;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .meroevents-footer {
+                font-size: 1rem;
+            }
+        }
+
+        /* Signup form styles */
+        .signup-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .signup-container {
+            display: flex;
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .signup-left,
+        .signup-right {
+            flex: 1 1 50%;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .signup-left {
+            background: linear-gradient(135deg, #7765F6 0%, #2D7DD2 100%);
+            color: white;
+            font-weight: 600;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .signup-left h2 {
+            font-size: 2.2rem;
+            margin-bottom: 24px;
+        }
+
+        .signup-left p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .signup-left a {
+            color: #f49939;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: auto;
+        }
+
+        .signup-left a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-right h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: #2d2f53;
+        }
+
+        .signup-form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .signup-form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.8px solid #cccccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .signup-form-group input:focus {
+            border-color: #7765F6;
+            box-shadow: 0 0 5px rgba(119, 101, 246, 0.5);
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 16px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            box-shadow: 0 6px 12px rgba(119, 101, 246, 0.5);
+        }
+
+        .signup-btn:hover {
+            background: #1c1d35;
+        }
+
+        .signup-social {
+            margin-top: 30px;
+            text-align: center;
+            font-weight: 600;
+            color: #888;
+        }
+
+        .signup-social-icons {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 22px;
+            color: #888;
+        }
+
+        .signup-social-icons i {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .signup-social-icons i:hover {
+            color: #7765F6;
+        }
+
+        /* Responsive for smaller screens */
+        @media (max-width: 768px) {
+            .signup-container {
+                flex-direction: column;
+                border-radius: 12px;
+            }
+
+            .signup-left,
+            .signup-right {
+                padding: 40px 30px;
+                border-radius: 0;
+            }
+
+            .signup-left {
+                border-radius: 12px 12px 0 0;
+            }
+
+            .signup-right {
+                border-radius: 0 0 12px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo-section">
+            <a href="#"><img src="static/outlined_logo.svg" alt="MeroEvents" style="height: 30px;" /></a>
+            <div class="logo-text"><a href="/">MeroEvents</a></div>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu(this)">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="nav-links" id="navLinks">
+            <a href="#">Home</a>
+            <a href="#">Services</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+
+            {% if request.session.logged_in %}
+            <button class="login-btn"><a href="/adminpage">Dashboard</a></button>
+            {% else %}
+            <button class="login-btn"><a href="/signup">Sign Up</a></button>
+            <button class="login-btn"><a href="/login">Login</a></button>
+            {% endif %}
+        </div>
+
+
+    </nav>
+
+    <section class="meroevents">
+        {% block section %}
+        <main class="container">
+            <div class="left">
+                <h1>Plan Your Events with Ease</h1>
+                <p>MeroEvents is your one-stop platform for seamless event planning. Whether it's a wedding, corporate
+                    event, or a personal celebration, we've got you covered.</p>
+                <a href="#" class="start-btn">Get Started</a>
+            </div>
+            <div class="right">
+                <div class="rating">Top Rated</div>
+                <img src="static/events.jpg" alt="Event Planning" />
+            </div>
+        </main>
+        {% endblock %}
+    </section>
+
+    <footer class="meroevents-footer">
+        © 2025 MeroEvents. All rights reserved. | <a href="#">Privacy Policy</a>
+    </footer>
+
+    <script>
+        function toggleMenu(icon) {
+            icon.classList.toggle("open");
+            document.getElementById("navLinks").classList.toggle("active");
+        }
+    </script>
+
+</body>
+
+</html>
