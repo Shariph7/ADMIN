@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +18,7 @@
     <div class="logo-section">
       <a href="/adminpage"><img src="static/outlined_logo.svg" alt="Mero Vidya" class="image"></a>
       <span class="logo-text"><a href="/adminpage" style="text-decoration: none; color: white;">
-       {{ username|upper }} Dashboard</a></span>
+          {{ username|upper }} Dashboard</a></span>
     </div>
 
     <div class="hamburger" id="hamburger">
@@ -50,7 +49,25 @@
         <div class="actions">
           <button class="btn"><a href="/createEvent" style="text-decoration: none; color: white;">+ Add
               Event</a></button>
-          <button class="btn"><a href="/student_register" style="text-decoration: none; color: white;">+ Add Student</a></i></button>
+          <button class="btn"><a href="/student_register" style="text-decoration: none; color: white;">+ Add
+              Student</a></button>
+
+          <!-- Excel Upload Form -->
+          <form id="excelForm" action="{% url 'upload_excel' %}" method="POST" enctype="multipart/form-data"
+            style="display:inline-block;">
+            {% csrf_token %}
+            <!-- Hidden file input -->
+            <input type="file" id="excelFile" name="excel_file" accept=".xlsx,.xls" style="display:none;" required>
+
+            <!-- Upload Button (initially shown) -->
+            <button type="button" id="uploadBtn" class="btn">Upload File</button>
+
+            <!-- Submit Button (hidden initially) -->
+            <button type="submit" id="submitBtn" class="btn" style="display:none;">Submit</button>
+
+            <!-- Optional: show selected filename -->
+            <span id="fileName" style="margin-left:10px; font-size: 13px;"></span>
+          </form>
         </div>
       </div>
 
@@ -142,6 +159,36 @@
     navLinks.classList.toggle('active');
     hamburger.classList.toggle('open');
   });
+
+  // Excel Upload Two-Step Behavior
+  const uploadBtn = document.getElementById("uploadBtn");
+  const submitBtn = document.getElementById("submitBtn");
+  const excelFile = document.getElementById("excelFile");
+  const excelForm = document.getElementById("excelForm");
+  const fileName = document.getElementById("fileName");
+
+  // Step 1: Click "Upload File" → open file picker
+  uploadBtn.addEventListener("click", () => {
+    excelFile.click();
+  });
+
+  // Step 2: File selected → show Submit button, hide Upload button, show filename
+  excelFile.addEventListener("change", () => {
+    if (excelFile.files.length > 0) {
+      uploadBtn.style.display = "none";
+      submitBtn.style.display = "inline-block";
+      fileName.textContent = excelFile.files[0].name;
+    }
+  });
+
+  // Step 3: After form submission → reset buttons
+  excelForm.addEventListener("submit", () => {
+    uploadBtn.style.display = "inline-block";
+    submitBtn.style.display = "none";
+    fileName.textContent = "";
+    excelFile.value = ""; // reset file input
+  });
+
 </script>
 
 </html>
