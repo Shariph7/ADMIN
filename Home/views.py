@@ -65,12 +65,44 @@ def adminpage(request):
     query_academic = request.GET.get("academic")
     class_list = ["Nursery", "LKG", "UKG"] + [str(i) for i in range(1, 13)]
 
+    # Delete Event
     if request.method == "POST" and "Delete_Event" in request.POST:
         event_id = request.POST.get("Delete_Event")
         event = get_object_or_404(Events, id=event_id, user=user)
         event.delete()
         return redirect("adminpage")
 
+    # Bulk Excel Upload
+    if request.method == "POST" and "excel_file" in request.FILES:
+        excel_file = request.FILES["excel_file"]
+        try:
+            wb = openpyxl.load_workbook(excel_file)
+            sheet = wb.active
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                Students.objects.create(
+                    first_name=row[0] or "",
+                    middle_name=row[1] or "",
+                    last_name=row[2] or "",
+                    dob=row[3] or None,
+                    student_id=row[4] or "",
+                    password=make_password(row[5]) if row[5] else make_password("default123"),
+                    street=row[6] or "",
+                    city=row[7] or "",
+                    province=row[8] or "",
+                    district=row[9] or "",
+                    zip=row[10] or "",
+                    email=row[11] or "",
+                    phone=row[12] or "",
+                    class_level=int(row[13]) if row[13] else None,
+                    faculty=row[14] or "",
+                    comments=row[15] or ""
+                )
+            messages.success(request, "Excel file uploaded successfully!")
+        except Exception as e:
+            messages.error(request, f"Error uploading file: {e}")
+        return redirect("adminpage")
+
+    # Filter Events
     items = Events.objects.filter(user=user)
     if query_class:
         items = items.filter(for_class__icontains=query_class)
@@ -139,65 +171,3 @@ def student_register(request):
         messages.success(request, "Student registered successfully!")
         return redirect('adminpage')
     return render(request, "student_register.html")
-
-@login_required
-def upload_excel(request):
-    if request.method == "POST" and request.FILES.get("excel_file"):
-        excel_file = request.FILES["excel_file"]
-        try:
-            wb = openpyxl.load_workbook(excel_file)
-            sheet = wb.active
-
-            for row in sheet.iter_rows(min_row=2, values_only=True):
-                # Skip rows with missing student_id or email
-                if not row[4] or not row[11]:
-                    continue
-
-                # Parse DOB
-                dob = row[3]
-                if isinstance(dob, str):
-                    try:
-                        dob = datetime.strptime(dob, "%Y-%m-%d").date()
-                    except:
-                        dob = None
-                elif isinstance(dob, datetime):
-                    dob = dob.date()
-
-                # Parse class_level
-                try:
-                    class_level = int(row[13]) if row[13] else None
-                except:
-                    class_level = None
-
-                # Convert numeric fields to strings if needed
-                student_id = str(row[4])
-                zip_code = str(row[10]) if row[10] else ""
-                phone = str(row[12]) if row[12] else ""
-
-                password = make_password(str(row[5])) if row[5] else make_password("default123")
-
-                # ✅ Create a new student object and save
-                student = Students(
-                    first_name=row[0],
-                    middle_name=row[1] or "",
-                    last_name=row[2],
-                    dob=dob,
-                    student_id=student_id,
-                    password=password,
-                    street=row[6] or "",
-                    city=row[7] or "",
-                    province=row[8] or "",
-                    district=row[9] or "",
-                    zip=zip_code,
-                    email=row[11],
-                    phone=phone,
-                    class_level=class_level,
-                    faculty=row[14] or "",
-                    comments=row[15] or ""
-                )
-                student.save()
-
-            messages.success(request, "Excel data uploaded successfully!")
-        except Exception as e:
-            messages.error(request, f"Error processing Excel file: {e}")
-    return redirect("adminpage")

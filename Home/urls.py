@@ -13,6 +13,5 @@ urlpatterns = [
     path("login", views.login, name="login"),
     path("createEvent", views.createEvent, name="createEvent"),
     path("logout", views.logout, name="logout"),
-    path("student_register", views.student_register, name="student_register"),
-    path('upload_excel', views.upload_excel, name='upload_excel'),
+    path("student_register", views.student_register, name="student_register")
 ]
