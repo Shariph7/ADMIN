@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mero Vidhya - Student</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo-section">
+      <a href="/adminpage"><img src="static/outlined_logo.svg" alt="Mero Vidya" class="image"></a>
+      <span class="logo-text"><a href="/adminpage" style="text-decoration: none; color: white;">
+          {{ username|upper }} Dashboard</a></span>
+    </div>
+
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="nav-links" id="nav-links">
+      <a href="#">Home</a>
+      <a href="#"><i class="fa fa-bell" style="font-size:20px"></i></a>
+      <a href="#"><i class="fa fa-search" style="font-size: 20px;"></i></a>
+      <button class="login-btn">
+        <a href="/logout" style="text-decoration: none; color: white;">Logout</a> <i>&#8594;</i>
+      </button>
+    </div>
+  </nav>
+
+
+  {% block main_container %}
+  <div class="main-container">
+    <div class="sidebar-space"></div>
+    <div class="content">
+      <div class="top-bar">
+        <div class="top-left">
+          <h2>Event Details</h2>
+        </div>
+        <div class="actions">
+  <button class="btn"><a href="/createEvent" style="text-decoration: none; color: white;">+ Add Event</a></button>
+  <button class="btn"><a href="/student_register" style="text-decoration: none; color: white;">+ Add Student</a></button>
+
+  <!-- Bulk Excel Upload -->
+  <form method="POST" action="{% url 'adminpage' %}" enctype="multipart/form-data" style="display:inline;" id="excelForm">
+    {% csrf_token %}
+    <input type="file" name="excel_file" id="excelFile" accept=".xlsx,.xls" style="display:none;" required>
+    <button type="button" class="btn" id="uploadBtn">⬆ Upload File</button>
+    <button type="submit" class="btn" id="submitBtn" style="display:none;">✅ Submit</button>
+</form>
+</div>
+      </div>
+
+      {% block mainEvent %}
+      <div class="filter-box">
+        <form method="GET" action="{% url 'adminpage' %}">
+          <div class="filters">
+            <div>
+              <label for="academic">Academic Year</label><br />
+              <select name="academic" id="academic">
+                <option value="">------</option>
+                <option value="2082" {% if query_academic == "2082" %}selected{% endif %}>2082</option>
+                <option value="2081" {% if query_academic == "2081" %}selected{% endif %}>2081</option>
+              </select>
+
+            </div>
+            <div>
+              <label for="for_class">Class Section</label><br />
+              <select name="for_class" id="for_class">
+                <option value="">------</option>
+                {% for cls in class_list %}
+                <option value="{{ cls }}" {% if request.GET.for_class == cls %}selected{% endif %}>{{ cls }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <button type="submit" class="search-btn">SEARCH</button>
+            </div>
+          </div>
+        </form>
+
+        {% if items %}
+        <div class="filter-box">
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse: collapse; font-family: 'Poppins', sans-serif; font-size: 13px;">
+              <thead>
+                <tr style="background-color: #4f46e5; color: white;">
+                  <th style="padding: 8px; text-align: left;">Event Name</th>
+                  <th style="padding: 8px; text-align: left;">Start Date</th>
+                  <th style="padding: 8px; text-align: left;">End Date</th>
+                  <th style="padding: 8px; text-align: left;">Venue</th>
+                  <th style="padding: 8px; text-align: left;">Class</th>
+                  <th style="padding: 8px; text-align: left;">Booking</th>
+                  <th style="padding: 8px; text-align: left;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                  <td style="padding: 6px 8px;">{{ item.event }}</td>
+                  <td style="padding: 6px 8px;">{{ item.start_date }}</td>
+                  <td style="padding: 6px 8px;">{{ item.end_date }}</td>
+                  <td style="padding: 6px 8px;">{{ item.venue }}</td>
+                  <td style="padding: 6px 8px;">{{ item.for_class }}</td>
+                  <td style="padding: 6px 8px;">{{ item.total_registrations }} / {{ item.available }}</td>
+                  <td style="padding: 6px 8px;">
+                    <form method="POST" style="display: inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="Delete_Event" value="{{ item.id }}">
+                      <button type="submit"
+                        style="padding: 5px 10px; background-color: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Poppins', sans-serif;">
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+        {% else %}
+        <div class="info-text">
+          Select class-section to view Students
+        </div>
+        {% endif %}
+      </div>
+      {% endblock mainEvent %}
+    </div>
+  </div>
+  {% endblock main_container %}
+</body>
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('nav-links');
+
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    hamburger.classList.toggle('open');
+  });
+
+  const uploadBtn = document.getElementById('uploadBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const excelFile = document.getElementById('excelFile');
+
+    // Step 1: Open file selector when clicking Upload File
+    uploadBtn.addEventListener('click', () => {
+        excelFile.click();
+    });
+
+    // Step 2: Show submit button after file is selected
+    excelFile.addEventListener('change', () => {
+        if (excelFile.files.length > 0) {
+            submitBtn.style.display = 'inline-block';
+            uploadBtn.style.display = 'none';
+        }
+    });
+
+    // Optional: Reset form after submission
+    document.getElementById('excelForm').addEventListener('submit', () => {
+        submitBtn.disabled = true;
+    });
+</script>
+
+</html>
