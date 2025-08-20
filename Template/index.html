@@ -112,10 +112,10 @@
         }
 
         .hamburger span {
-            height: 3px;
-            width: 25px;
+            width: 28px;
+            height: 3.5px;
             background-color: white;
-            border-radius: 2px;
+            border-radius: 3px;
             transition: 0.3s ease;
         }
 
@@ -143,40 +143,37 @@
             }
 
             .nav-links {
-                position: absolute;
-                top: 100%;
+                position: fixed;
+                top: 60px;
                 left: 0;
-                width: 100%;
+                width: 100vw;
+                background: #2D7DD2;
                 flex-direction: column;
-                background-color: #2D7DD2;
-                overflow: hidden;
+                gap: 0;
                 max-height: 0;
+                overflow: hidden;
                 opacity: 0;
                 transition: all 0.3s ease;
+                z-index: 998;
                 padding: 0;
-                z-index: 999;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
 
             .nav-links.active {
-                max-height: 500px;
+                max-height: 320px;
                 opacity: 1;
-                padding: 1rem 0;
             }
 
             .nav-links a,
             .nav-links .login-btn {
-                padding: 12px 24px;
+                padding: 1rem 0;
                 width: 100%;
-                text-align: left;
-                font-size: 15px;
+                text-align: center;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.15);
             }
 
             .login-btn {
-                width: calc(100% - 48px);
-                margin: 8px 24px;
-                text-align: center;
-                font-size: 15px;
+                border-radius: 0;
+                margin: 0;
             }
         }
 

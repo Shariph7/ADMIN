@@ -25,12 +25,14 @@ class Events(models.Model):
     Money = models.IntegerField(null=True, blank=True)
     for_class = models.CharField(max_length=30, null=True, blank=True)
     description = models.TextField()
+    image = models.ImageField(upload_to='event_images/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.event} ({self.start_date})"
 
 
 class Students(models.Model):
+    organization = models.ForeignKey(SignupData, on_delete=models.CASCADE, related_name='students', null=True)
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30)
@@ -50,6 +52,7 @@ class Students(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.student_id})"
+
     
 class Booking(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE, related_name="bookings")

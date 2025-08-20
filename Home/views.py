@@ -137,6 +137,7 @@ def createEvent(request):
         end_time_str = request.POST.get("end_time")
         start_time = datetime.strptime(start_time_str, "%H:%M").time() if start_time_str else None
         end_time = datetime.strptime(end_time_str, "%H:%M").time() if end_time_str else None
+        image = request.FILES.get("image")
 
         event = Events(
             user=user,
@@ -150,16 +151,22 @@ def createEvent(request):
             Money=request.POST.get("Money"),
             venue=request.POST.get("venue"),
             for_class=", ".join(request.POST.getlist("for_class")),
-            description=request.POST.get("description")
+            description=request.POST.get("description"),
+            image=image
         )
         event.save()
         return redirect("adminpage")
     return render(request, "createEvent.html")
 
+@login_required
 def student_register(request):
     if request.method == "POST":
+        # The logged-in admin
+        admin_user = SignupData.objects.get(username=request.session.get('username'))
+
         hashed_password = make_password(request.POST.get("password"))
         student_instance = Students(
+            organization=admin_user,
             first_name=request.POST.get("first_name"),
             middle_name=request.POST.get("middle_name", ""),
             last_name=request.POST.get("last_name"),
@@ -181,3 +188,6 @@ def student_register(request):
         messages.success(request, "Student registered successfully!")
         return redirect('adminpage')
     return render(request, "student_register.html")
+
+def admin(request):
+    return render(request, "admin.html")

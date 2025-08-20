@@ -1,11 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Event</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
@@ -237,6 +239,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Navbar -->
   <nav class="navbar">
@@ -299,6 +302,10 @@
           <div class="field">
             <label for="available">Available*</label>
             <input type="number" name="available" id="available" required />
+          </div>
+          <div class="field">
+            <label for="image">Event Image:</label>
+            <input type="file" name="image" id="image"><br><br>
           </div>
         </div>
 
@@ -370,4 +377,5 @@
     paySelect.addEventListener("change", toggleMoneyField);
   </script>
 </body>
+
 </html>
