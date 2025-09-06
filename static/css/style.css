@@ -340,7 +340,8 @@ body {
         width: 220px;
     }
 
-    .btn, .search-btn {
+    .btn,
+    .search-btn {
         padding: 8px 12px;
         font-size: 13px;
     }
@@ -458,12 +459,14 @@ body {
         font-size: 13px;
     }
 
-    .btn, .search-btn {
+    .btn,
+    .search-btn {
         font-size: 12px;
         padding: 8px 10px;
     }
 
-    table th, table td {
+    table th,
+    table td {
         padding: 6px;
     }
 

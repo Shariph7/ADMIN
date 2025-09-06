@@ -6,6 +6,8 @@ from django.contrib.auth.hashers import check_password, make_password
 import openpyxl
 from datetime import datetime
 from django.db.models import Count
+from django.http import JsonResponse
+from django.db import IntegrityError
 
 # Custom login_required decorator using session
 def login_required(view_func):
@@ -128,11 +130,12 @@ def logout(request):
 
 @login_required
 def createEvent(request):
+    classes = ['Nursery', 'L.K.G', 'U.K.G'] + [str(i) for i in range(1, 13)]
+
     if request.method == "POST":
         username = request.session.get('username')
         user = SignupData.objects.get(username=username)
 
-        # Parse time strings into time objects
         start_time_str = request.POST.get("start_time")
         end_time_str = request.POST.get("end_time")
         start_time = datetime.strptime(start_time_str, "%H:%M").time() if start_time_str else None
@@ -156,38 +159,79 @@ def createEvent(request):
         )
         event.save()
         return redirect("adminpage")
-    return render(request, "createEvent.html")
+
+    return render(request, "createEvent.html", {"classes": classes})
+
 
 @login_required
 def student_register(request):
     if request.method == "POST":
-        # The logged-in admin
         admin_user = SignupData.objects.get(username=request.session.get('username'))
-
         hashed_password = make_password(request.POST.get("password"))
-        student_instance = Students(
-            organization=admin_user,
-            first_name=request.POST.get("first_name"),
-            middle_name=request.POST.get("middle_name", ""),
-            last_name=request.POST.get("last_name"),
-            dob=request.POST.get("dob"),
-            student_id=request.POST.get("student_id"),
-            password=hashed_password,
-            street=request.POST.get("street"),
-            city=request.POST.get("city"),
-            province=request.POST.get("province"),
-            district=request.POST.get("district"),
-            zip=request.POST.get("zip"),
-            email=request.POST.get("email"),
-            phone=request.POST.get("phone"),
-            class_level=int(request.POST.get("class_level")) if request.POST.get("class_level") else None,
-            faculty=request.POST.get("faculty"),
-            comments=request.POST.get("comments", "")
-        )
-        student_instance.save()
-        messages.success(request, "Student registered successfully!")
-        return redirect('adminpage')
+
+        try:
+            student_instance = Students(
+                organization=admin_user,
+                first_name=request.POST.get("first_name"),
+                middle_name=request.POST.get("middle_name", ""),
+                last_name=request.POST.get("last_name"),
+                dob=request.POST.get("dob"),
+                student_id=request.POST.get("student_id"),
+                password=hashed_password,
+                street=request.POST.get("street"),
+                city=request.POST.get("city"),
+                province=request.POST.get("province"),
+                district=request.POST.get("district"),
+                zip=request.POST.get("zip"),
+                email=request.POST.get("email"),
+                phone=request.POST.get("phone"),
+                class_level=int(request.POST.get("class_level")) if request.POST.get("class_level") else None,
+                faculty=request.POST.get("faculty"),
+                comments=request.POST.get("comments", "")
+            )
+            student_instance.save()
+            messages.success(request, "Student registered successfully!")
+            return redirect('adminpage')
+        except IntegrityError as e:
+            if 'email' in str(e):
+                messages.error(request, f"The email '{request.POST.get('email')}' is already registered.")
+            elif 'student_id' in str(e):
+                messages.error(request, f"The Student ID '{request.POST.get('student_id')}' is already registered.")
+            else:
+                messages.error(request, f"An error occurred: {e}")
+            return redirect('student_register')
+
     return render(request, "student_register.html")
 
-def admin(request):
-    return render(request, "admin.html")
+@login_required
+def editEvent(request, event_id):
+    classes = ['Nursery', 'L.K.G', 'U.K.G'] + [str(i) for i in range(1, 13)]
+    username = request.session.get('username')
+    user = SignupData.objects.get(username=username)
+    event = get_object_or_404(Events, id=event_id, user=user)
+
+    if request.method == "POST":
+        event.event = request.POST.get("event")
+        event.start_date = request.POST.get("start_date")
+        event.end_date = request.POST.get("end_date")
+        event.type = request.POST.get("type")
+        event.start_time = datetime.strptime(request.POST.get("start_time"), "%H:%M").time()
+        event.end_time = datetime.strptime(request.POST.get("end_time"), "%H:%M").time()
+        event.available = request.POST.get("available")
+        event.Money = request.POST.get("Money")
+        event.venue = request.POST.get("venue")
+        event.for_class = ", ".join(request.POST.getlist("for_class"))
+        event.description = request.POST.get("description")
+
+        if 'image' in request.FILES:
+            event.image = request.FILES['image']
+
+        event.save()
+        messages.success(request, "Event updated successfully!")
+        return redirect("adminpage")
+
+    return render(request, "createEvent.html", {
+        "edit": True,
+        "event_data": event,
+        "classes": classes
+    })

@@ -4,10 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Event</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
-    rel="stylesheet">
+  <title>{% if edit %}Edit Event{% else %}Create Event{% endif %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
@@ -18,48 +16,53 @@
     }
 
     body {
-      background-color: #f9fafb;
-      color: #1f2937;
       font-family: 'Poppins', sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+      background-color: #f8fafc;
+      color: #1f2937;
+      min-height: 100vh;
     }
 
     .navbar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 1rem 4rem;
-      background: linear-gradient(to right, #7765F6, #2D7DD2);
+      align-items: center;
+      padding: 1rem 3rem;
+      background: linear-gradient(90deg, #6c63ff, #2d7dd2);
       color: white;
       font-family: 'Montserrat', sans-serif;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
     .logo-section {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 10px;
     }
 
-    .logo-text {
-      font-size: 1.3rem;
+    .logo-section img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .logo-text a {
+      color: white;
+      font-size: 1.5rem;
       font-weight: 700;
-      letter-spacing: 1px;
+      text-decoration: none;
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 2rem;
-      font-family: 'Montserrat', sans-serif;
+      gap: 20px;
     }
 
     .nav-links a {
       color: white;
+      font-size: 15px;
       text-decoration: none;
       font-weight: 500;
-      transition: opacity 0.2s ease-in-out;
+      transition: 0.3s ease;
     }
 
     .nav-links a:hover {
@@ -68,53 +71,36 @@
 
     .login-btn {
       border: 1px solid white;
-      padding: 0.4rem 1rem;
+      padding: 6px 14px;
       border-radius: 6px;
       font-weight: 600;
       background: transparent;
       color: white;
       cursor: pointer;
-      transition: background 0.2s ease-in-out;
-      font-family: 'Montserrat', sans-serif;
+      transition: 0.3s ease;
     }
 
     .login-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .image {
-      height: 28px;
-      width: 28px;
-    }
-
-    .main-body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
+      background: rgba(255, 255, 255, 0.15);
     }
 
     .form-section {
       width: 100%;
-      padding: 40px 60px;
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-
-    .form-section::-webkit-scrollbar {
-      display: none;
+      padding: 40px 50px;
     }
 
     h2 {
       font-size: 26px;
       font-weight: 600;
+      margin-bottom: 30px;
       color: #333;
-      margin-bottom: 32px;
+      text-align: center;
     }
 
     form {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 28px;
     }
 
     .row {
@@ -123,30 +109,44 @@
       flex-wrap: wrap;
     }
 
+    .row.first-row .field {
+      flex: 1;
+      min-width: 200px;
+    }
+
     .field {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
+      min-width: 200px;
     }
 
     .field label {
       font-size: 14px;
       font-weight: 500;
-      color: #444;
+      color: #555;
     }
 
     .field input,
     .field select,
     .field textarea {
-      padding: 12px;
+      padding: 12px 14px;
       font-size: 15px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 4px;
       background: #fff;
-      color: #333;
+      color: #111827;
       outline: none;
       width: 100%;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #6c63ff;
+      box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
     }
 
     textarea {
@@ -154,87 +154,35 @@
       resize: vertical;
     }
 
-    .actions {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .actions input[type="file"] {
-      flex: 1;
-    }
-
-    .actions button {
-      padding: 12px 20px;
-      background: #e53e3e;
-      color: #fff;
+    button[type="submit"] {
+      padding: 14px;
+      font-family: 'Poppins', sans-serif;
+      background: #6c63ff;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .actions button.edit {
-      background: #38a169;
-    }
-
-    .actions button:hover {
-      opacity: 0.9;
-    }
-
-    button[type="submit"] {
-      padding: 10px;
-      font-family: 'Poppins', sans-serif;
-      background: #5a67d8;
-      color: white;
-      font-size: 16px;
-      font-weight: 500;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      width: 220px;
+      transition: 0.3s ease;
+      width: 100%;
     }
 
     button[type="submit"]:hover {
-      background-color: #434190;
+      background-color: #554dcc;
+      box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
     }
 
     @media (max-width: 768px) {
-      body {
+      .row {
         flex-direction: column;
       }
 
       .navbar {
         flex-direction: column;
         align-items: flex-start;
-        padding: 1rem 2rem;
-      }
-
-      .main-body {
-        flex-direction: column;
-      }
-
-      .sidebar {
-        display: none;
-      }
-
-      .form-section {
-        width: 100%;
-        padding: 24px;
-      }
-
-      .row {
-        flex-direction: column;
-      }
-
-      .actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      button[type="submit"] {
-        width: 100%;
+        gap: 10px;
+        padding: 15px 20px;
       }
     }
   </style>
@@ -244,118 +192,121 @@
   <!-- Navbar -->
   <nav class="navbar">
     <div class="logo-section">
-      <a href="/adminpage"><img src="static/outlined_logo.svg" alt="Mero Vidya" class="image"></a>
-      <span class="logo-text"><a href="/adminpage" style="text-decoration: none; color: white;">Mero Events</a></span>
+      <a href="/adminpage"><img src="static/outlined_logo.svg" alt="Mero Vidya"></a>
+      <span class="logo-text"><a href="/adminpage">Mero Events</a></span>
     </div>
     <div class="nav-links">
       <a href="#">Home</a>
       <a href="#"><i class="fa fa-bell" style="font-size:20px"></i></a>
-      <a href="#"><i class="fa fa-search" style="font-size: 20px;"></i></a>
-      <button class="login-btn">
-        <a href="/logout" style="text-decoration: none; color: white;">Logout</a> <i>&#8594;</i>
-      </button>
+      <a href="#"><i class="fa fa-search" style="font-size:20px"></i></a>
+      <button class="login-btn"><a href="/logout">Logout</a></button>
     </div>
   </nav>
 
-  <!-- Page content -->
-  <div class="main-body">
-
-    <div class="form-section">
-      <form action="{% url 'createEvent' %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="row">
-          <div class="field">
-            <label for="event">Event Title*</label>
-            <input type="text" name="event" id="event" placeholder="e.g. Science Fair" required />
-          </div>
-          <div class="field">
-            <label for="start_date">Start Date*</label>
-            <input type="date" name="start_date" id="start_date" required />
-          </div>
-          <div class="field">
-            <label for="end_date">End Date*</label>
-            <input type="date" name="end_date" id="end_date" required />
-          </div>
-          <div class="field">
-            <label for="type">Event Type*</label>
-            <select name="type" id="type" required>
-              <option value="">------</option>
-              <option value="Exam">Exam</option>
-              <option value="Sports">Sports</option>
-              <option value="Holiday">Holiday</option>
-              <option value="Program">Program</option>
-              <option value="Meeting">Meeting</option>
-              <option value="Celebration">Celebration</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label for="start_time">Start Time*</label>
-            <input type="time" name="start_time" id="start_time" required />
-          </div>
-          <div class="field">
-            <label for="end_time">End Time*</label>
-            <input type="time" name="end_time" id="end_time" required />
-          </div>
-          <div class="field">
-            <label for="available">Available*</label>
-            <input type="number" name="available" id="available" required />
-          </div>
-          <div class="field">
-            <label for="image">Event Image:</label>
-            <input type="file" name="image" id="image"><br><br>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label for="venue">Venue*</label>
-            <input type="text" name="venue" id="venue" placeholder="e.g. Main Auditorium" required />
-          </div>
-          <div class="field">
-            <label for="pay">Pay*</label>
-            <select name="pay" id="pay" required>
-              <option value="">------</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="money">Money*</label>
-            <input type="number" name="Money" id="money" placeholder="₹ ---" required />
-          </div>
-          <div class="field">
-            <label for="for_class">Select Class*</label>
-            <select name="for_class" id="for_class" multiple required>
-              <option value="Nursery">Nursery</option>
-              <option value="L.K.G">L.K.G</option>
-              <option value="U.K.G">U.K.G</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-            </select>
-          </div>
-        </div>
-
+  <!-- Form Section Full Width -->
+  <div class="form-section">
+    <form action="{% if edit %}{% url 'editEvent' event_data.id %}{% else %}{% url 'createEvent' %}{% endif %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- First row -->
+      <div class="row first-row">
         <div class="field">
-          <label for="description">Description</label>
-          <textarea name="description" id="description" required></textarea>
+          <label for="event">Event Title*</label>
+          <input type="text" name="event" id="event" placeholder="e.g. Science Fair" value="{{ event_data.event|default_if_none:'' }}" required />
         </div>
+        <div class="field">
+          <label for="start_date">Start Date*</label>
+          <input type="date" name="start_date" id="start_date" value="{{ event_data.start_date|date:'Y-m-d' }}" required />
+        </div>
+        <div class="field">
+          <label for="end_date">End Date*</label>
+          <input type="date" name="end_date" id="end_date" value="{{ event_data.end_date|date:'Y-m-d' }}" required />
+        </div>
+        <div class="field">
+          <label for="type">Event Type*</label>
+          <select name="type" id="type" required>
+            <option value="">------</option>
+            <option value="Exam" {% if event_data.type == 'Exam' %}selected{% endif %}>Exam</option>
+            <option value="Sports" {% if event_data.type == 'Sports' %}selected{% endif %}>Sports</option>
+            <option value="Holiday" {% if event_data.type == 'Holiday' %}selected{% endif %}>Holiday</option>
+            <option value="Program" {% if event_data.type == 'Program' %}selected{% endif %}>Program</option>
+            <option value="Meeting" {% if event_data.type == 'Meeting' %}selected{% endif %}>Meeting</option>
+            <option value="Celebration" {% if event_data.type == 'Celebration' %}selected{% endif %}>Celebration</option>
+          </select>
+        </div>
+      </div>
 
-        <button type="submit">Publish Event</button>
-      </form>
-    </div>
+      <!-- Second row -->
+      <div class="row">
+        <div class="field">
+          <label for="start_time">Start Time*</label>
+          <input type="time" name="start_time" id="start_time" value="{{ event_data.start_time|default_if_none:'' }}" required />
+        </div>
+        <div class="field">
+          <label for="end_time">End Time*</label>
+          <input type="time" name="end_time" id="end_time" value="{{ event_data.end_time|default_if_none:'' }}" required />
+        </div>
+        <div class="field">
+          <label for="available">Available*</label>
+          <input type="number" name="available" id="available" value="{{ event_data.available|default_if_none:'' }}" required />
+        </div>
+        <div class="field">
+          <label for="image">Event Image</label>
+          <input type="file" name="image" id="image">
+          {% if event_data.image %}
+            <p>Current: <img src="{{ event_data.image.url }}" alt="Event Image" style="width:80px; height:80px; object-fit:cover;"></p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Third row -->
+      <div class="row">
+        <div class="field">
+          <label for="venue">Venue*</label>
+          <input type="text" name="venue" id="venue" placeholder="e.g. Main Auditorium" value="{{ event_data.venue|default_if_none:'' }}" required />
+        </div>
+        <div class="field">
+          <label for="pay">Pay*</label>
+          <select name="pay" id="pay" required>
+            <option value="">------</option>
+            <option value="Yes" {% if event_data.pay == 'Yes' %}selected{% endif %}>Yes</option>
+            <option value="No" {% if event_data.pay == 'No' %}selected{% endif %}>No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="money">Money*</label>
+          <input type="number" name="Money" id="money" placeholder="₹ ---" required />
+        </div>
+        <div class="field">
+          <label for="for_class">Select Class*</label>
+          <select name="for_class" id="for_class" multiple required>
+            <option value="Nursery">Nursery</option>
+            <option value="L.K.G">L.K.G</option>
+            <option value="U.K.G">U.K.G</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea name="description" id="description" required>{{ event_data.description|default_if_none:'' }}</textarea>
+      </div>
+
+      <!-- Publish Button -->
+      <button type="submit">{% if edit %}Update Event{% else %}Publish Event{% endif %}</button>
+    </form>
   </div>
 
   <script>
